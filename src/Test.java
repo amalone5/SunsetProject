@@ -14,7 +14,7 @@ public class Test
 
 	public Test(int dummy1, int dummy2)
 	{
-//		System.out.println("World hello!");
+		System.out.println("World hello!");
 
 	}
 
