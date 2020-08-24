@@ -14,6 +14,7 @@ public class Test
 
 	public Test(int dummy1, int dummy2)
 	{
+		System.out.println("Hello World!");
 
 	}
 
