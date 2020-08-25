@@ -67,6 +67,8 @@ public class PictureManager
 		} 
 	} 
 
+
+
 	public void writeTenPrettiest()
 	{
 		shellSort();

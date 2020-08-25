@@ -11,28 +11,44 @@ public class Test
 	Point point;
 	CommandLine bash;
 	ArryFun arrayFunctions;
+	Sort sort;
 
-	public Test(int dummy1, int dummy2)
+	/*
+	 * This will take forever if there are 
+	 * lots of picture files
+	 */
+	public void init_all()
 	{
-		System.out.println("World hello!");
+		init_sort();
+		init_bash();
+		init_point();
+		init_manager();
+		init_picture();
 	}
 
-
-	public Test(int dummy)
+	public void init_sort()
 	{
-		manager = new PictureManager("/mnt/SlaveDrive/BigPictureProject/pool");
+		sort = new Sort();
 	}
 
-
-	public Test() {
-		picture = new Picture("somepicture.jpg");
-		manager = new PictureManager("/mnt/SlaveDrive/BigPictureProject/pool");
-		point = new Point(1,2);
+	public void init_bash()
+	{
 		bash = new CommandLine();
-		arrayFunctions = new ArryFun();
-
+	}
+	public void init_point()
+	{
+		point = new Point(1,2);
 	}
 
+	public void init_manager()
+	{
+		manager = new PictureManager("/mnt/SlaveDrive2/BigPictureProject/pool");
+	}
+
+	public void init_picture()
+	{
+		picture = new Picture("/path/to/picture.jpg");
+	}
 
 	public void printPictureStats(){
 		picture.printPictureStats();
@@ -216,9 +232,19 @@ public class Test
 	}
 
 
+	/* Tests for Sort*/
+
+	public void shellSort()
+	{
+	}
+
+
+
+
+
 	public static void main(String[] args)
 	{
-		Test test = new Test(0);
+		Test test = new Test();
 		test.writeAll();
 	}
 
