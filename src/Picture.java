@@ -9,6 +9,10 @@ public class Picture {
     public final String name;
     public double prettyScore;
 
+	public int red;
+	public int green;
+	public int blue;
+
     /*
      * This works under the assumption that the fully
      * qualified name is provided to the program.
@@ -17,15 +21,20 @@ public class Picture {
         soul = getSoul(pictureName);
         name = pictureName;
 
-        if (soul != null) {
-            prettyScore = getPrettyScore();
-        }
+		red = sumRed();
+		green = sumGreen();
+		blue = sumBlue();
+
+        prettyScore = getPrettyScore();
     }
 
 
     public BufferedImage getSoul(String pictureName) {
         if (!isJpgFile(pictureName))
-            return null;
+		{
+			System.out.println(pictureName+"not a jpg, bailing");
+			System.exit(1);
+		}
 
         File input = new File(pictureName);
         BufferedImage soul = null;
@@ -122,9 +131,9 @@ public class Picture {
 
     public double redBlueRatioProduct() {
         double size = getWidth() * getHeight();
-        double red = sumRed() / size;
-        double green = sumGreen() / size;
-        double blue = sumBlue() / size;
+        double red = this.red / size;
+        double green = this.green / size;
+        double blue = this.blue / size;
         double yellow = red + green;
 
         return yellow * blue;
@@ -140,16 +149,38 @@ public class Picture {
         return rbrp;
     }
 
-    public boolean prettierThan(Picture other) {
-        if (other == null)
-            return true;
+	public double redBlueRatio()
+	{
+		double redDouble = red;
+		double blueDouble = blue;
+		double ratio = redDouble/blueDouble;
+		return ratio;
+	}
 
-        return this.prettyScore < other.prettyScore;
+	public boolean pictureIsBright()
+	{
+		return redBlueRatioProduct() > 12000;
+
+	}
+
+    public boolean prettierThan(Picture other) {
+
+		if(!this.pictureIsBright())
+			return false;
+
+		if(this.pictureIsBright() && !other.pictureIsBright())
+			return true;
+		
+		return (this.redBlueRatio() > other.redBlueRatio());
     }
+
 
     public void writePrettyScore() {
         Bash bash = new Bash();
-        bash.executeCommand("echo 'Score: " + prettyScore + "' >> ../pictures/pictureinfo.txt");
+		String infostring = "Score: " + prettyScore;
+		infostring = infostring + " | rbrp: " + redBlueRatioProduct();
+		infostring = infostring + " | R:"+red+" G:"+green+" B:"+blue;
+        bash.executeCommand("echo '" + infostring + "' >> ../pictures/pictureinfo.txt");
         System.out.println();
     }
 
@@ -178,8 +209,50 @@ public class Picture {
         } catch (IOException e1) {
             System.out.println("Something went wrong!");
         }
-
     }
+
+
+	public int getColorsAtThreshold(int threshold)
+	{
+		int count = 0;
+
+		for(int w = 0; w < getWidth(); w++)
+			for(int h = 0; h < getHeight(); h++)
+			{
+				Color color = new Color(soul.getRGB(w,h));
+
+				if( (threshold <= color.getRed()) || 
+					(threshold <= color.getGreen()) ||
+					(threshold <= color.getBlue()) )
+				{
+					count ++;
+				}
+			}
+		return count;
+	}
+
+	public String chart(int input, int output)
+	{
+		String line = "\n"+input + ": ";
+		for(int i = 0; i < output; i += 1908)
+			line = line + "*";
+
+		return line;
+
+	}
+
+	public void intensityHistogram()
+	{
+		String histogram = "";
+		for(int threshold = 255; threshold >= 0; threshold --)
+		{
+			int colorsAtThreshold = getColorsAtThreshold(threshold);
+			histogram = histogram + chart(threshold, colorsAtThreshold);
+		}
+		Bash bash = new Bash();
+		bash.executeCommand("echo '"+histogram+"' > ../histograms/xxx"+name +"_histogram.txt");
+	}
+
 
     public String toString() {
         return name;
