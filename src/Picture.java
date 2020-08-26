@@ -149,7 +149,7 @@ public class Picture {
 
     public void writePrettyScore() {
         Bash bash = new Bash();
-        bash.executeCommand("echo 'Score: " + redBlueRatioProduct() + "' >> ../pictures/pictureinfo.txt");
+        bash.executeCommand("echo 'Score: " + prettyScore + "' >> ../pictures/pictureinfo.txt");
         System.out.println();
     }
 
