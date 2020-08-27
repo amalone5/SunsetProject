@@ -23,6 +23,21 @@ public class StrippedPicture
 		return (this.redBlueRatio > other.redBlueRatio);
     }
 
+    /*
+        'this' prettier than other -> 1
+        Pictures are the same -> 0
+        'this' uglier than other -> -1
+     */
+    public int compareTo(StrippedPicture otherPicture) {
+
+        if (this.prettierThan(otherPicture))
+            return 1;
+        if (otherPicture.prettierThan(this))
+            return -1;
+
+        return 0;
+    }
+
 	public void copyTo(String otherName)
 	{
 		Bash bash = new Bash();

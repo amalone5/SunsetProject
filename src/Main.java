@@ -13,10 +13,27 @@ public class Main
 		//
 		//	args[0] = '/path/to/archive/' 
 		//	args[1] = '/path/to/pool/' 
-		//	args[2] =  sample size 
+		//	args[2] =  no cache flag -> --no-cache 
 			
+		if(args.length < 2 || args.length > 3){
+			System.out.println("Wrong number of args!");
+			return;
+		}
 
-		PictureManager manager = new PictureManager("/mnt/SlaveDrive2/BigPictureProject/pool");
-		manager.writeAll();
+		if(args.length == 3 && !args[2].equals("--no-cache")){
+			System.out.println("Don't know what "+args[2]+" means, bailing");
+			return;
+		}
+
+		int AMOUNT_OF_PICTURES = 10;
+		PictureManager pictureManager = new PictureManager(args[0]);
+
+		if(args.length == 2) // default - try to use cache, bail to random pictures if no cache
+			if(pictureManager.hasCache()){
+				pictureManager.writeXFromPrettiest(AMOUNT_OF_PICTURES, args[1]);
+				return;
+			}
+		
+		pictureManager.writeXFromRandom(AMOUNT_OF_PICTURES, args[1]);
 	}
 }

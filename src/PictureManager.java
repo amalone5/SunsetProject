@@ -1,52 +1,84 @@
+import java.io.File;
 import java.util.Scanner;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class PictureManager {
 	public String picturePath;
-	public Picture[] pictures;
 	public Bash bash;
-	public Sort sort;
+	public PictureSorter pictureSorter;
+	public StrippedPictureSorter strippedPictureSorter;
 
 	public PictureManager(String picturePath) {
 		this.picturePath = picturePath;
-		bash = new Bash();
-		sort = new Sort();
-		pictures = null;
+		bash = new Bash();;
+		pictureSorter = new PictureSorter();
+		strippedPictureSorter = new StrippedPictureSorter();
 	}
 
-	public Picture[] getPictures() {
-		ArrayList<String> pictureNames = bash.getFilesFromDirectory(picturePath);
-		Picture[] thePictures = new Picture[pictureNames.size()];
+	public boolean hasCache(){
+		File f = new File("picturecache.txt");
+		if(f.exists() && !f.isDirectory()) 
+			return true;
 
-		for (int i = 0; i < thePictures.length; i++) {
-			System.out.println("Generating picture " + i);
-			String pictureName = pictureNames.get(i);
-			thePictures[i] = new Picture(pictureName);
+		return false;
+	}
+
+	public ArrayList<Picture> getXRandomPictures(int x)
+	{
+		ArrayList<Picture> randomPictures = new ArrayList<>();
+		ArrayList<String> names = getPictureCandidateNames();
+
+		for(int i = 0; i < x; i++)
+		{
+			System.out.println("Generating "+i);
+			int random = (int)(Math.random() * names.size());
+			randomPictures.add( new Picture(names.get(random)) );
 		}
 
-		return sort.shellSort(thePictures);
+		return randomPictures;
 	}
 
-	public void sortPictures()
+	public ArrayList<StrippedPicture> takeXRandomFromList(
+			int x, ArrayList<StrippedPicture> pictures)
 	{
-		pictures = sort.shellSort(pictures);
+		int SAMPLE_SIZE = 250;
+		ArrayList<StrippedPicture> randomPictures = new ArrayList<>();
+		for(int i = 0; i < x; i++)
+		{
+			int random = (int)(Math.random() * SAMPLE_SIZE);
+			randomPictures.add( pictures.get(random) );
+		}
+
+		return randomPictures;
 	}
 
-	public void writeTenPrettiest() {
-		for (int i = 0; i < 10; i++)
-			pictures[i].writePixelsToPicture(pictures[i].getAllPixels(), "../pictures/Pretty" + i + ".jpg");
+	public void writeXFromPrettiest(int x, String pathToPool)
+	{
+		ArrayList<StrippedPicture> pictures = getStrippedPictures();
+		pictures.sort(strippedPictureSorter);
+		Collections.reverse(pictures);
+		ArrayList<StrippedPicture> random = takeXRandomFromList(x,pictures);
+
+		for(int i = 0; (i < random.size()) &&
+					   (i < x);  i++)
+			random.get(i).copyTo(pathToPool+"Pretty"+(10000000 + i + 1));
 	}
 
-	public void writeAll() {
-		for (int i = 0; i < pictures.length; i++)
-			pictures[i].writePixelsToPicture(pictures[i].getAllPixels(), "../pictures/Pretty" + (100000 + i + 1) + ".jpg");
 
-	}
+	public void writeXFromRandom(int x, String pathToPool)
+	{
+		int SAMPLE_SIZE = 250; 
+		ArrayList<Picture> randomPictures = getXRandomPictures(SAMPLE_SIZE);
 
-	public void writeScores() {
-		bash.executeCommand("rm ../pictures/pictureinfo.txt");
-		for (int i = 0; i < pictures.length; i++)
-			pictures[i].writePrettyScore();
+		randomPictures.sort(pictureSorter);
+		Collections.reverse(randomPictures);
+
+  		for (int i = 0; i < x; i++)
+		{
+			Picture current = randomPictures.get(i);
+			current.writePixelsToPicture(pathToPool+"Pretty"+(10000000 + i + 1) );
+		}
 	}
 
 	private void writePictureCandidateNames()
@@ -70,44 +102,7 @@ public class PictureManager {
 		return names;
 	}
 
-	public void writeHistograms()
-	{
-		for(int i = 0; i < pictures.length; i++)
-		{
-			pictures[i].intensityHistogram();
-		}
-	}
-
-	public Picture[] takeXFromPool(int x)
-	{
-		Picture[] randomPictures = new Picture[x];
-		ArrayList<String> names = getPictureCandidateNames();
-
-		for(int i = 0; i < randomPictures.length; i++)
-		{
-			System.out.println("Generating "+i);
-			int random = (int)(Math.random() * names.size());
-			randomPictures[i] = new Picture(names.get(random));
-		}
-		return randomPictures; 
-	}
-
-	public Picture[] take1000FromPool()
-	{
-		Picture[] randomPictures = new Picture[1000];
-		ArrayList<String> names = getPictureCandidateNames();
-
-		for(int i = 0; i < randomPictures.length; i++)
-		{
-			System.out.println("Generating "+i);
-			int random = (int)(Math.random() * names.size());
-			randomPictures[i] = new Picture(names.get(random));
-		}
-
-		return randomPictures;
-	}
-
-	public StrippedPicture[] getStrippedPictures()
+	public ArrayList<StrippedPicture> getStrippedPictures()
 	{
 		Scanner pictureCache = bash.getFile("picturecache.txt");
 		ArrayList<StrippedPicture> strippedPictures = new ArrayList<>();
@@ -120,30 +115,12 @@ public class PictureManager {
 			StrippedPicture nextPicture = new StrippedPicture(name,pictureIsBright,redBlueRatio);
 			strippedPictures.add(nextPicture);
 		}
-
-		int arraySize = strippedPictures.size();
-		StrippedPicture[] strippedArray = new StrippedPicture[arraySize];
-
-		for(int i = 0; i < arraySize; i++)
-			strippedArray[i] = strippedPictures.get(i);
 		
-		return strippedArray;
-	}
-
-	public void writeXPrettyPictures(int x)
-	{
-		StrippedPicture[] pictures = getStrippedPictures();
-		pictures = sort.shellSort(pictures);
-
-		for(int i = 0; (i < pictures.length) &&
-					   (i < x);  i++)
-			pictures[i].copyTo("../pictures/Pretty"+(10000000 + i + 1));
-
+		return strippedPictures;
 	}
 
 	public void cacheArchive()
 	{
-		bash.executeCommand("rm -f picturecache.txt");
 		ArrayList<String> names = getPictureCandidateNames();
 
 		Picture picture;
@@ -161,14 +138,5 @@ public class PictureManager {
 			bash.executeCommand(
 					"echo '"+strippedPicture.toString()+"' >> picturecache.txt");
 		}
-	}
-
-	public String toString() {
-		String output = "[";
-		int i;
-		for (i = 0; i < pictures.length - 1; i++)
-			output = output + pictures[i].toString() + ", ";
-
-		return output;
 	}
 }

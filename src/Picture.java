@@ -4,14 +4,13 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-public class Picture {
+public class Picture implements Comparable<Picture> {
     public final BufferedImage soul;
     public final String name;
-    public double prettyScore;
 
-	public int red;
-	public int green;
-	public int blue;
+    public int red;
+    public int green;
+    public int blue;
 
     /*
      * This works under the assumption that the fully
@@ -21,20 +20,17 @@ public class Picture {
         soul = getSoul(pictureName);
         name = pictureName;
 
-		red = sumRed();
-		green = sumGreen();
-		blue = sumBlue();
-
-        prettyScore = getPrettyScore();
+        red = sumRed();
+        green = sumGreen();
+        blue = sumBlue();
     }
 
 
     public BufferedImage getSoul(String pictureName) {
-        if (!isJpgFile(pictureName))
-		{
-			System.out.println(pictureName+"not a jpg, bailing");
-			System.exit(1);
-		}
+        if (!isJpgFile(pictureName)) {
+            System.out.println(pictureName + "not a jpg, bailing");
+            System.exit(1);
+        }
 
         File input = new File(pictureName);
         BufferedImage soul = null;
@@ -129,7 +125,11 @@ public class Picture {
         return sum;
     }
 
-    public double redBlueRatioProduct() {
+    /*
+        Not actually sure why this works. Proceed with
+        caution.
+    */
+    public double getBrightness() {
         double size = getWidth() * getHeight();
         double red = this.red / size;
         double green = this.green / size;
@@ -139,124 +139,58 @@ public class Picture {
         return yellow * blue;
     }
 
-    /*
-     * Zero is a perfect score, higher score is uglier
-     */
-    public double getPrettyScore() {
-        double rbrp = redBlueRatioProduct();
-        rbrp = rbrp - 18000;
-        rbrp = Math.abs(rbrp);
-        return rbrp;
+    public double redBlueRatio() {
+        double redDouble = red;
+        double blueDouble = blue;
+        return redDouble / blueDouble;
     }
 
-	public double redBlueRatio()
-	{
-		double redDouble = red;
-		double blueDouble = blue;
-		double ratio = redDouble/blueDouble;
-		return ratio;
-	}
+    public boolean pictureIsBright() {
+        return getBrightness() > 12000;
 
-	public boolean pictureIsBright()
-	{
-		return redBlueRatioProduct() > 12000;
-
-	}
+    }
 
     public boolean prettierThan(Picture other) {
 
-		if(!this.pictureIsBright())
-			return false;
+        if (!this.pictureIsBright())
+            return false;
 
-		if(this.pictureIsBright() && !other.pictureIsBright())
-			return true;
-		
-		return (this.redBlueRatio() > other.redBlueRatio());
+        if (this.pictureIsBright() && !other.pictureIsBright())
+            return true;
+
+        return (this.redBlueRatio() > other.redBlueRatio());
     }
 
+    /*
+        'this' prettier than other -> 1
+        Pictures are the same -> 0
+        'this' uglier than other -> -1
+     */
+    public int compareTo(Picture otherPicture) {
 
-    public void writePrettyScore() {
-        Bash bash = new Bash();
-		String infostring = "Score: " + prettyScore;
-		infostring = infostring + " | rbrp: " + redBlueRatioProduct();
-		infostring = infostring + " | R:"+red+" G:"+green+" B:"+blue;
-        bash.executeCommand("echo '" + infostring + "' >> ../pictures/pictureinfo.txt");
-        System.out.println();
+        if (this.prettierThan(otherPicture))
+            return 1;
+        if (otherPicture.prettierThan(this))
+            return -1;
+
+        return 0;
     }
 
-    public int[][] getAllPixels() {
-        int[][] pixels = new int[getWidth()][getHeight()];
-        Color color;
-
-        for (int w = 0; w < getWidth(); w++)
-            for (int h = 0; h < getHeight(); h++) {
-                color = new Color(soul.getRGB(w, h));
-                pixels[w][h] = color.getRGB();
-            }
-        return pixels;
-    }
-
-    public void writePixelsToPicture(int[][] pixels, String pictureName) {
+    public void writePixelsToPicture(String pictureName) {
         File outputfile = new File(pictureName);
-        BufferedImage image = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
-
-        for (int w = 0; w < getWidth(); w++)
-            for (int h = 0; h < getHeight(); h++)
-                image.setRGB(w, h, pixels[w][h]);
 
         try {
-            ImageIO.write(image, "jpg", outputfile);
+            ImageIO.write(soul, "jpg", outputfile);
         } catch (IOException e1) {
-            System.out.println("Something went wrong!");
+            System.out.println("Picture "+this.name+" didn't write to "+pictureName);
         }
     }
-
-
-	public int getColorsAtThreshold(int threshold)
-	{
-		int count = 0;
-
-		for(int w = 0; w < getWidth(); w++)
-			for(int h = 0; h < getHeight(); h++)
-			{
-				Color color = new Color(soul.getRGB(w,h));
-
-				if( (threshold <= color.getRed()) || 
-					(threshold <= color.getGreen()) ||
-					(threshold <= color.getBlue()) )
-				{
-					count ++;
-				}
-			}
-		return count;
-	}
-
-	public String chart(int input, int output)
-	{
-		String line = "\n"+input + ": ";
-		for(int i = 0; i < output; i += 1908)
-			line = line + "*";
-
-		return line;
-
-	}
-
-	public void intensityHistogram()
-	{
-		String histogram = "";
-		for(int threshold = 255; threshold >= 0; threshold --)
-		{
-			int colorsAtThreshold = getColorsAtThreshold(threshold);
-			histogram = histogram + chart(threshold, colorsAtThreshold);
-		}
-		Bash bash = new Bash();
-		bash.executeCommand("echo '"+histogram+"' > ../histograms/xxx"+name +"_histogram.txt");
-	}
-
 
     public String toString() {
         return name;
     }
+
+
 }
 
 

@@ -1,11 +1,11 @@
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Test
 {
 	Picture picture;
 	PictureManager manager;
 	Bash bash;
-	Sort sort;
 
 	public StrippedPicture strippedPicture;
 
@@ -15,23 +15,15 @@ public class Test
 	 */
 	public void init_all()
 	{
-		init_sort();
 		init_bash();
 		init_manager();
 		init_picture();
 	}
 
-
 	public void init_strippedPicture()
 	{
 		strippedPicture = new StrippedPicture(
 				"/mnt/SlaveDrive2/BigPictureProject/full/archive/2017/08/20170810-034432.jpg",true,1.5);
-	}
-
-
-	public void init_sort()
-	{
-		sort = new Sort();
 	}
 
 	public void init_bash()
@@ -52,7 +44,6 @@ public class Test
 
 	/* Tests for Picture */
 
-
 	public void redBlueRatio()
 	{
 		double ratio = picture.redBlueRatio();
@@ -61,61 +52,22 @@ public class Test
 
 	/* Tests for PictureManager */
 
-//	public void getStrippedPictures()
-//	{
-//		ArrayList<StrippedPicture> strippedPictures = manager.getStrippedPictures();
-//		System.out.println(strippedPictures);
-//
-//	}
-
-
-	public void writeXPrettyPictures()
+	public void writeXFromPrettiest()
 	{
-		bash.executeCommand("touch startstamp.txt");
-		manager.writeXPrettyPictures(1000000000);
-		bash.executeCommand("touch endstamp.txt");
+		manager.writeXFromPrettiest(10,"/home/austin/Documents/CodeBase/GitCode/SunsetProject/pictures/");
+
 	}
 
-	public void take1000FromPool()
+	public void writeXFromRandom()
 	{
-		manager.pictures = manager.take1000FromPool();
-		System.out.println("Sorting...");
-		manager.sortPictures();
-//		System.out.println("Writing Scores...");
-//		manager.writeScores();
-		System.out.println("Writing Pictures...");
-		manager.writeAll();
-//		System.out.println("Writing Histograms...");
-//		manager.writeHistograms();
-	}
+		manager.writeXFromRandom(100,"/home/austin/Documents/CodeBase/GitCode/SunsetProject/pictures/");
 
+	}
 
 	public void cacheArchive()
 	{
 		manager.cacheArchive();
 	}
-
-	/* Tests for Sort*/
-
-
-    public void shellSort() 
-	{
-		StrippedPicture[] unsorted = makeManyPictures(10);
-
-		System.out.println("### Unsorted ###");
-		for(int i = 0; i < unsorted.length; i++)
-			System.out.println(unsorted[i].redBlueRatio );
-
-		unsorted = sort.shellSort(unsorted);
-
-		System.out.println("\n\n\n### Sorted ###");
-
-		for(int i = 0; i < unsorted.length; i++)
-			System.out.println(unsorted[i].redBlueRatio );
-
-	}
-
-
 
 	/* Tests for StrippedPicture*/
 
@@ -141,27 +93,12 @@ public class Test
 		strippedPicture.copyTo("otherNothing.jpg");
 	}
 
-
 	/* Analysis */
-
-	public void writeAndAnalyzePool()
-	{
-		manager.pictures = manager.takeXFromPool(20);
-		manager.sortPictures();
-		manager.writeAll();
-	}	
-
-	public void calculateGoodAnchor()
-	{
-		double rbrp = picture.redBlueRatioProduct();
-		System.out.println("Good rbrp: "+rbrp);
-	}
 
 	public static void main(String[] args)
 	{
 		Test test = new Test();
 		test.init_manager();
-		test.init_bash();
-		test.writeXPrettyPictures();
+		test.writeXFromPrettiest();
 	}
 }
