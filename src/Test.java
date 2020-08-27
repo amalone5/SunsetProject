@@ -7,6 +7,8 @@ public class Test
 	Bash bash;
 	Sort sort;
 
+	public StrippedPicture strippedPicture;
+
 	/*
 	 * This will take forever if there are 
 	 * lots of picture files
@@ -18,6 +20,14 @@ public class Test
 		init_manager();
 		init_picture();
 	}
+
+
+	public void init_strippedPicture()
+	{
+		strippedPicture = new StrippedPicture(
+				"/mnt/SlaveDrive2/BigPictureProject/full/archive/2017/08/20170810-034432.jpg",true,1.5);
+	}
+
 
 	public void init_sort()
 	{
@@ -78,6 +88,14 @@ public class Test
 		manager.cacheArchive();
 	}
 
+	/* Tests for StrippedPicture*/
+
+	public void copyTo()
+	{
+		strippedPicture.copyTo("otherNothing.jpg");
+	}
+
+
 	/* Analysis */
 
 	public void writeAndAnalyzePool()
@@ -96,7 +114,7 @@ public class Test
 	public static void main(String[] args)
 	{
 		Test test = new Test();
-		test.init_manager();
-		test.getStrippedPictures();
+		test.init_strippedPicture();
+		test.copyTo();
 	}
 }

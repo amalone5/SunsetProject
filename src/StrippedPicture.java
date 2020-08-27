@@ -23,6 +23,12 @@ public class StrippedPicture
 		return (this.redBlueRatio > other.redBlueRatio);
     }
 
+	public void copyTo(String otherName)
+	{
+		Bash bash = new Bash();
+		bash.executeCommand("cp "+ name + " " + otherName);
+	}
+
 	public String toString()
 	{
 		String output = 
@@ -32,6 +38,5 @@ public class StrippedPicture
 
 		return output;
 	}
-
 
 }
