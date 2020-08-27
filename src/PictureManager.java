@@ -107,7 +107,7 @@ public class PictureManager {
 		return randomPictures;
 	}
 
-	public ArrayList<StrippedPicture> getStrippedPictures()
+	public StrippedPicture[] getStrippedPictures()
 	{
 		Scanner pictureCache = bash.getFile("picturecache.txt");
 		ArrayList<StrippedPicture> strippedPictures = new ArrayList<>();
@@ -120,7 +120,25 @@ public class PictureManager {
 			StrippedPicture nextPicture = new StrippedPicture(name,pictureIsBright,redBlueRatio);
 			strippedPictures.add(nextPicture);
 		}
-		return strippedPictures;
+
+		int arraySize = strippedPictures.size();
+		StrippedPicture[] strippedArray = new StrippedPicture[arraySize];
+
+		for(int i = 0; i < arraySize; i++)
+			strippedArray[i] = strippedPictures.get(i);
+		
+		return strippedArray;
+	}
+
+	public void writeXPrettyPictures(int x)
+	{
+		StrippedPicture[] pictures = getStrippedPictures();
+		pictures = sort.shellSort(pictures);
+
+		for(int i = 0; (i < pictures.length) &&
+					   (i < x);  i++)
+			pictures[i].copyTo("../pictures/Pretty"+(10000000 + i + 1));
+
 	}
 
 	public void cacheArchive()

@@ -61,13 +61,20 @@ public class Test
 
 	/* Tests for PictureManager */
 
-	public void getStrippedPictures()
+//	public void getStrippedPictures()
+//	{
+//		ArrayList<StrippedPicture> strippedPictures = manager.getStrippedPictures();
+//		System.out.println(strippedPictures);
+//
+//	}
+
+
+	public void writeXPrettyPictures()
 	{
-		ArrayList<StrippedPicture> strippedPictures = manager.getStrippedPictures();
-		System.out.println(strippedPictures);
-
+		bash.executeCommand("touch startstamp.txt");
+		manager.writeXPrettyPictures(1000000000);
+		bash.executeCommand("touch endstamp.txt");
 	}
-
 
 	public void take1000FromPool()
 	{
@@ -88,7 +95,46 @@ public class Test
 		manager.cacheArchive();
 	}
 
+	/* Tests for Sort*/
+
+
+    public void shellSort() 
+	{
+		StrippedPicture[] unsorted = makeManyPictures(10);
+
+		System.out.println("### Unsorted ###");
+		for(int i = 0; i < unsorted.length; i++)
+			System.out.println(unsorted[i].redBlueRatio );
+
+		unsorted = sort.shellSort(unsorted);
+
+		System.out.println("\n\n\n### Sorted ###");
+
+		for(int i = 0; i < unsorted.length; i++)
+			System.out.println(unsorted[i].redBlueRatio );
+
+	}
+
+
+
 	/* Tests for StrippedPicture*/
+
+	public StrippedPicture makeRandomPicture()
+	{
+		double random = Math.random()*2;
+		StrippedPicture stripped = new StrippedPicture("dumb.jpg",true,random);
+		return stripped;
+	}
+
+	public StrippedPicture[] makeManyPictures(int amountOfPictures)
+	{
+		StrippedPicture[] pictures = new StrippedPicture[amountOfPictures];
+
+		for(int i = 0; i < amountOfPictures; i++)
+			pictures[i] = makeRandomPicture();
+
+		return pictures;
+	}
 
 	public void copyTo()
 	{
@@ -114,7 +160,8 @@ public class Test
 	public static void main(String[] args)
 	{
 		Test test = new Test();
-		test.init_strippedPicture();
-		test.copyTo();
+		test.init_manager();
+		test.init_bash();
+		test.writeXPrettyPictures();
 	}
 }
