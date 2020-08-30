@@ -17,7 +17,12 @@ public class Main
 		int AMOUNT_OF_PICTURES = 10;
 		PictureManager pictureManager = new PictureManager(args[0],args[1]);
 
-		if(runWithoutCache(args, pictureManager)){
+		if(userWantsToCache(args)){
+			System.out.println("Caching data");
+			pictureManager = new PictureManager(args[0]);
+			pictureManager.cacheArchive();
+		}
+		else if(runWithoutCache(args, pictureManager)){
 			System.out.println("Running without using cache");
 			pictureManager.writeXFromRandom(AMOUNT_OF_PICTURES);
 		}
@@ -33,6 +38,11 @@ public class Main
 	public static boolean validNumberOfArgs(String[] args)
 	{
 		return (args.length >= 2 && args.length <= 3);
+	}
+
+	public static boolean userWantsToCache(String[] args)
+	{
+		return (args.length == 2 && args[1].equals("--cache-data"));
 	}
 
 

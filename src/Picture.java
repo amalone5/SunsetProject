@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class Picture implements Comparable<Picture> {
+
     public BufferedImage soul;
     public String name;
 
@@ -72,7 +73,7 @@ public class Picture implements Comparable<Picture> {
     public void sumRGB(){
 		Color color = null;
 
-        for (int height = 0; height < getHeight(); height += 1)
+        for (int height = 0; height < getHeight(); height++)
 			for (int width = 0; width < getWidth(); width += 1){
 				color = new Color(soul.getRGB(width, height));
 				red = red + color.getRed();
@@ -86,7 +87,7 @@ public class Picture implements Comparable<Picture> {
         caution.
     */
     public double getBrightness() {
-        double size = getWidth() * getHeight();
+        double size = (getWidth() * getHeight());
         double red = this.red / size;
         double green = this.green / size;
         double blue = this.blue / size;
@@ -143,7 +144,11 @@ public class Picture implements Comparable<Picture> {
     }
 
     public String toString() {
-        return name;
+		String output = "";
+		output = output + "RGB: "+red+" "+green+" "+blue+" | ";
+		output = output + "Brightness: " + getBrightness()+" | ";
+		output = output + "W H: " + getWidth() + " "+ getHeight();
+        return output;
     }
 }
 

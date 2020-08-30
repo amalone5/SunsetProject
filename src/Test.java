@@ -43,6 +43,13 @@ public class Test
 		manager.cacheArchive();
 	}
 
+	public void writeStats()
+	{
+		ArrayList<Picture> pictures = manager.getXRandomPictures(1000);
+		manager.writeStats(pictures);
+		manager.writePictures(pictures);
+	}
+
 	/* Tests for StrippedPicture*/
 
 	public StrippedPicture makeRandomPicture()
@@ -72,5 +79,6 @@ public class Test
 	public static void main(String[] args)
 	{
 		Test test = new Test();
+		test.writeStats();
 	}
 }

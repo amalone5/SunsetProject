@@ -20,7 +20,7 @@ public class PictureManager {
 
 	public PictureManager(String pathToArchive) {
 		this.pathToArchive = pathToArchive;
-		bash = new Bash();;
+		bash = new Bash();
 		pictureSorter = new PictureSorter();
 		strippedPictureSorter = new StrippedPictureSorter();
 	}
@@ -77,7 +77,7 @@ public class PictureManager {
 
 	public void writeXFromRandom(int x)
 	{
-		int SAMPLE_SIZE = 250; 
+		int SAMPLE_SIZE = 1000; 
 		ArrayList<Picture> randomPictures = getXRandomPictures(SAMPLE_SIZE);
 
 		randomPictures.sort(pictureSorter);
@@ -146,6 +146,21 @@ public class PictureManager {
 
 			bash.executeCommand(
 					"echo '"+strippedPicture.toString()+"' >> picturecache.txt");
+		}
+	}
+
+	public void writeStats(ArrayList<Picture> pictures){
+
+		for(int i = 0; i < pictures.size(); i++)
+			bash.executeCommand("echo '"
+					+pictures.get(i).toString()+"' >> ../pictures/pictureStats.txt");
+
+	}
+
+	public void writePictures(ArrayList<Picture> pictures){
+		for(int i = 0; i < pictures.size(); i++)
+		{
+			pictures.get(i).writePixelsToPicture("../pictures/Picture"+(10000)+(i+1)+".jpg");
 		}
 	}
 }
