@@ -4,13 +4,22 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class PictureManager {
-	public String picturePath;
+	public String pathToArchive;
+	public String pathToPool;
 	public Bash bash;
 	public PictureSorter pictureSorter;
 	public StrippedPictureSorter strippedPictureSorter;
 
-	public PictureManager(String picturePath) {
-		this.picturePath = picturePath;
+	public PictureManager(String pathToArchive, String pathToPool) {
+		this.pathToPool = pathToPool;
+		this.pathToArchive = pathToArchive;
+		bash = new Bash();;
+		pictureSorter = new PictureSorter();
+		strippedPictureSorter = new StrippedPictureSorter();
+	}
+
+	public PictureManager(String pathToArchive) {
+		this.pathToArchive = pathToArchive;
 		bash = new Bash();;
 		pictureSorter = new PictureSorter();
 		strippedPictureSorter = new StrippedPictureSorter();
@@ -53,7 +62,7 @@ public class PictureManager {
 		return randomPictures;
 	}
 
-	public void writeXFromPrettiest(int x, String pathToPool)
+	public void writeXFromPrettiest(int x)
 	{
 		ArrayList<StrippedPicture> pictures = getStrippedPictures();
 		pictures.sort(strippedPictureSorter);
@@ -66,7 +75,7 @@ public class PictureManager {
 	}
 
 
-	public void writeXFromRandom(int x, String pathToPool)
+	public void writeXFromRandom(int x)
 	{
 		int SAMPLE_SIZE = 250; 
 		ArrayList<Picture> randomPictures = getXRandomPictures(SAMPLE_SIZE);
@@ -83,21 +92,21 @@ public class PictureManager {
 
 	private void writePictureCandidateNames()
 	{
-		String command = "find "+picturePath+" -type f | grep 'jpg' ";
-		command = command + " > "+picturePath+"picturecandidates.txt";
+		String command = "find "+pathToArchive+" -type f | grep 'jpg' ";
+		command = command + " > "+pathToArchive+"picturecandidates.txt";
 		bash.executeCommand(command);
 	}
 
 	public ArrayList<String> getPictureCandidateNames()
 	{
 		writePictureCandidateNames();
-		Scanner picturecandidates = bash.getFile(picturePath+"picturecandidates.txt");
+		Scanner picturecandidates = bash.getFile(pathToArchive+"picturecandidates.txt");
 		ArrayList<String> names = new ArrayList<>();
 
 		while (picturecandidates.hasNext())
 			names.add(picturecandidates.nextLine());
 
-		bash.executeCommand("rm "+picturePath+"picturecandidates.txt");
+		bash.executeCommand("rm "+pathToArchive+"picturecandidates.txt");
 		picturecandidates.close();
 		return names;
 	}

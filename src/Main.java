@@ -15,15 +15,15 @@ public class Main
 		}
 
 		int AMOUNT_OF_PICTURES = 10;
-		PictureManager pictureManager = new PictureManager(args[0]);
+		PictureManager pictureManager = new PictureManager(args[0],args[1]);
 
 		if(runWithoutCache(args, pictureManager)){
 			System.out.println("Running without using cache");
-			pictureManager.writeXFromRandom(AMOUNT_OF_PICTURES, args[1]);
+			pictureManager.writeXFromRandom(AMOUNT_OF_PICTURES);
 		}
 		else if(runDefault(args, pictureManager)){
 			System.out.println("Running using cache");
-			pictureManager.writeXFromPrettiest(AMOUNT_OF_PICTURES, args[1]);
+			pictureManager.writeXFromPrettiest(AMOUNT_OF_PICTURES);
 		}
 		else
 			System.out.println("Bad flag somewhere!");

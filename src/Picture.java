@@ -20,9 +20,7 @@ public class Picture implements Comparable<Picture> {
         soul = getSoul(pictureName);
         name = pictureName;
 
-        red = sumRed();
-        green = sumGreen();
-        blue = sumBlue();
+		sumRGB();
     }
 
 
@@ -71,58 +69,16 @@ public class Picture implements Comparable<Picture> {
         return soul.getHeight();
     }
 
-    public int sumRedAtHeight(int height) {
-        int sum = 0;
-        Color c;
-        for (int i = 0; i < getWidth(); i++) {
-            c = new Color(soul.getRGB(i, height));
-            sum = sum + c.getRed();
-        }
-        return sum;
-    }
+    public void sumRGB(){
+		Color color = null;
 
-    public int sumRed() {
-        int sum = 0;
-        for (int i = 0; i < getHeight(); i++)
-            sum = sum + sumRedAtHeight(i);
-
-        return sum;
-    }
-
-    public int sumGreenAtHeight(int height) {
-        int sum = 0;
-        Color c;
-        for (int i = 0; i < getWidth(); i++) {
-            c = new Color(soul.getRGB(i, height));
-            sum = sum + c.getGreen();
-        }
-        return sum;
-    }
-
-    public int sumGreen() {
-        int sum = 0;
-        for (int i = 0; i < getHeight(); i++)
-            sum = sum + sumGreenAtHeight(i);
-
-        return sum;
-    }
-
-    public int sumBlueAtHeight(int height) {
-        int sum = 0;
-        Color c;
-        for (int i = 0; i < getWidth(); i++) {
-            c = new Color(soul.getRGB(i, height));
-            sum = sum + c.getBlue();
-        }
-        return sum;
-    }
-
-    public int sumBlue() {
-        int sum = 0;
-        for (int i = 0; i < getHeight(); i++)
-            sum = sum + sumBlueAtHeight(i);
-
-        return sum;
+        for (int height = 0; height < getHeight(); height += 1)
+			for (int width = 0; width < getWidth(); width += 1){
+				color = new Color(soul.getRGB(width, height));
+				red = red + color.getRed();
+				green = green + color.getGreen();
+				blue = blue + color.getBlue();
+			}
     }
 
     /*
@@ -190,7 +146,5 @@ public class Picture implements Comparable<Picture> {
         return name;
     }
 
-
 }
-
 
