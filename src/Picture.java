@@ -5,8 +5,8 @@ import java.io.File;
 import java.io.IOException;
 
 public class Picture implements Comparable<Picture> {
-    public final BufferedImage soul;
-    public final String name;
+    public BufferedImage soul;
+    public String name;
 
     public int red;
     public int green;
@@ -145,6 +145,5 @@ public class Picture implements Comparable<Picture> {
     public String toString() {
         return name;
     }
-
 }
 
