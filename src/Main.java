@@ -9,31 +9,46 @@ public class Main
 	 */
 	public static void main(String[] args)
 	{
-		//TODO make this a real app! 
-		//
-		//	args[0] = '/path/to/archive/' 
-		//	args[1] = '/path/to/pool/' 
-		//	args[2] =  no cache flag -> --no-cache 
-			
-		if(args.length < 2 || args.length > 3){
+		if(!validNumberOfArgs(args)){
 			System.out.println("Wrong number of args!");
-			return;
-		}
-
-		if(args.length == 3 && !args[2].equals("--no-cache")){
-			System.out.println("Don't know what "+args[2]+" means, bailing");
 			return;
 		}
 
 		int AMOUNT_OF_PICTURES = 10;
 		PictureManager pictureManager = new PictureManager(args[0]);
 
-		if(args.length == 2) // default - try to use cache, bail to random pictures if no cache
-			if(pictureManager.hasCache()){
-				pictureManager.writeXFromPrettiest(AMOUNT_OF_PICTURES, args[1]);
-				return;
-			}
-		
-		pictureManager.writeXFromRandom(AMOUNT_OF_PICTURES, args[1]);
+		if(runWithoutCache(args, pictureManager)){
+			System.out.println("Running without using cache");
+			pictureManager.writeXFromRandom(AMOUNT_OF_PICTURES, args[1]);
+		}
+		else if(runDefault(args, pictureManager)){
+			System.out.println("Running using cache");
+			pictureManager.writeXFromPrettiest(AMOUNT_OF_PICTURES, args[1]);
+		}
+		else
+			System.out.println("Bad flag somewhere!");
+
+	}
+
+	public static boolean validNumberOfArgs(String[] args)
+	{
+		return (args.length >= 2 && args.length <= 3);
+	}
+
+
+	public static boolean runWithoutCache(String[] args, PictureManager manager)
+	{
+		if(args.length == 3 && args[2].equals("--no-cache"))
+			return true;
+
+		if(args.length == 2 && !manager.hasCache())
+			return true;
+
+		return false;
+	}
+
+	public static boolean runDefault(String[] args, PictureManager manager)
+	{
+		return (args.length == 2) ;
 	}
 }
